@@ -91,16 +91,47 @@ title="login" && country="CN"
 **主要参数**:
 - `query`: 查询语法（如：`title:"后台"`, `ip:1.1.1.1`）
 - `size`: 返回条数（默认 100）
-- `include`: 包含字段（如：`ip,port,service.http.title`）
-- `exclude`: 排除字段
+- `include`: 包含字段（逗号分隔，见下方可用字段列表）
+- `exclude`: 排除字段（逗号分隔）
 - `pagination_id`: 深度翻页 ID（5分钟有效）
-- `start_time` / `end_time`: 时间范围（UTC格式）
+- `start_time` / `end_time`: 时间范围（UTC格式：2020-10-14 00:00:00）
+
+**可用字段（注册用户 - 服务数据）**:
+```
+ip, port, hostname, transport, asn, org, service.name, 
+location.country_cn, location.province_cn, location.city_cn, 
+service.http.host, service.http.title, service.http.server
+```
+
+**可用字段（会员用户 - 额外服务数据字段）**:
+```
+time, domain, service.response, service.cert, 
+components.product_catalog, components.product_type, 
+components.product_level, components.product_vendor, 
+location.country_en, location.province_en, location.city_en, 
+location.district_en, location.district_cn, location.isp, 
+service.http.body, components.product_name_cn, components.version, 
+service.http.infomation.mail, service.http.favicon.hash, 
+service.http.favicon.data, service.http.status_code
+```
 
 **查询示例**:
 ```
 title:"后台管理"
 ip:1.1.1.1 AND port:80
 service:http AND country:"china"
+```
+
+**字段筛选示例**:
+```
+# 只返回 IP 和端口
+include: "ip,port"
+
+# 返回 IP、端口和网页标题
+include: "ip,port,service.http.title"
+
+# 返回完整信息（会员）
+include: "ip,port,service.http.title,service.http.server,domain,components.product_name_cn"
 ```
 
 #### 3. Hunter 查询 (`hunter_search`)

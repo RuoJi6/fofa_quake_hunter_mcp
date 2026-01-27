@@ -74,7 +74,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "include": {
                         "type": "string",
-                        "description": "Comma-separated fields to include in results. Common fields: ip (IP address), port (port number), hostname (hostname), service.name (service name), service.http.title (web title), service.http.server (server type), location.country_cn (country), location.province_cn (province), location.city_cn (city), domain (domain name). Example: 'ip' for only IP, 'ip,port,service.http.title' for IP, port and title. If not specified, returns all default fields.",
+                        "description": "Comma-separated fields to include in results. Registered users - Service data: ip, port, hostname, transport, asn, org, service.name, location.country_cn, location.province_cn, location.city_cn, service.http.host, service.http.title, service.http.server. Member users - Additional service data fields: time, domain, service.response, service.cert, components.product_catalog, components.product_type, components.product_level, components.product_vendor, location.country_en, location.province_en, location.city_en, location.district_en, location.district_cn, location.isp, service.http.body, components.product_name_cn, components.version, service.http.infomation.mail, service.http.favicon.hash, service.http.favicon.data, service.http.status_code. Example: 'ip,port,service.http.title' returns only IP, port and title. If not specified, returns all default fields.",
                     },
                     "exclude": {
                         "type": "string",
