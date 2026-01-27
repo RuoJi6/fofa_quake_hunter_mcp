@@ -36,7 +36,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "size": {
                         "type": "integer",
-                        "description": "Number of results to return (default: 100, max: 10000)",
+                        "description": "Number of results to return (default: 100, max: 10000). IMPORTANT: If user specifies a number (e.g., '查询10个', 'find 5 results'), use that number as size value.",
                         "default": 100,
                     },
                     "page": {
@@ -65,7 +65,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "size": {
                         "type": "integer",
-                        "description": "Number of results to return per page (default: 100, larger size = longer request time)",
+                        "description": "Number of results to return per page (default: 100, larger size = longer request time). IMPORTANT: If user specifies a number (e.g., '查询10个', 'find 5 results'), use that number as size value.",
                         "default": 100,
                     },
                     "pagination_id": {
@@ -120,7 +120,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "page_size": {
                         "type": "integer",
-                        "description": "Results per page (default: 10, valid values: 10, 50, 100)",
+                        "description": "Results per page (default: 10, valid values: 10, 50, 100). IMPORTANT: If user specifies a number (e.g., '查询10个', 'find 5 results'), choose the closest valid value (10, 50, or 100). For 1-30 use 10, for 31-75 use 50, for 76+ use 100.",
                         "default": 10,
                         "enum": [10, 50, 100],
                     },
