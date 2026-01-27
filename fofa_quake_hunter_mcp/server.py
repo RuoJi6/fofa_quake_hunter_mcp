@@ -55,7 +55,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="quake_search",
-            description="Search Quake 360 cyberspace mapping platform using scroll API (supports deep pagination). Requires QUAKE_KEY environment variable. Query syntax: title:\"keyword\" for title search, ip:1.1.1.1 for IP, domain:example.com for domain, port:80 for port, service:http for service. IMPORTANT: Use 'include' parameter to specify which fields to return. Supports pagination_id for getting more pages.",
+            description="Search Quake 360 cyberspace mapping platform using scroll API (supports deep pagination). Requires QUAKE_KEY environment variable. Query syntax: title:\"keyword\" for title search, ip:1.1.1.1 for IP, domain:example.com for domain, port:80 for port, service:http for service. IMPORTANT: Use 'include' parameter to specify which fields to return. NOTE: Field names must be exact - use 'asn' and 'org' (NOT 'as_org'), use specific component fields like 'components.product_name_cn' (NOT just 'components'). Supports pagination_id for getting more pages.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -74,7 +74,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "include": {
                         "type": "string",
-                        "description": "Comma-separated fields to include in results. Registered users - Service data: ip, port, hostname, transport, asn, org, service.name, location.country_cn, location.province_cn, location.city_cn, service.http.host, service.http.title, service.http.server. Member users - Additional service data fields: time, domain, service.response, service.cert, components.product_catalog, components.product_type, components.product_level, components.product_vendor, location.country_en, location.province_en, location.city_en, location.district_en, location.district_cn, location.isp, service.http.body, components.product_name_cn, components.version, service.http.infomation.mail, service.http.favicon.hash, service.http.favicon.data, service.http.status_code. Example: 'ip,port,service.http.title' returns only IP, port and title. If not specified, returns all default fields.",
+                        "description": "Comma-separated fields to include. REGISTERED USERS can use: ip, port, hostname, transport, asn, org, service.name, location.country_cn, location.province_cn, location.city_cn, service.http.host, service.http.title, service.http.server. MEMBER USERS can additionally use: time, domain, service.response, service.cert, components.product_catalog, components.product_type, components.product_level, components.product_vendor, location.country_en, location.province_en, location.city_en, location.district_en, location.district_cn, location.isp, service.http.body, components.product_name_cn, components.version, service.http.infomation.mail, service.http.favicon.hash, service.http.favicon.data, service.http.status_code. IMPORTANT: Use exact field names - 'asn' and 'org' (NOT 'as_org'), specific component fields like 'components.product_name_cn' (NOT 'components'). Example: 'ip,port,service.http.title,org,asn' for basic info with organization.",
                     },
                     "exclude": {
                         "type": "string",

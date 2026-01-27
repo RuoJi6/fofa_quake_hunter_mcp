@@ -130,9 +130,17 @@ include: "ip,port"
 # 返回 IP、端口和网页标题
 include: "ip,port,service.http.title"
 
-# 返回完整信息（会员）
-include: "ip,port,service.http.title,service.http.server,domain,components.product_name_cn"
+# 返回基础信息和组织
+include: "ip,port,service.http.title,org,asn"
+
+# 返回完整信息（会员）- 注意使用具体的组件字段
+include: "ip,port,service.http.title,service.http.server,domain,components.product_name_cn,components.version"
 ```
+
+**⚠️ 常见字段错误**:
+- ❌ `components` → ✅ 使用具体字段如 `components.product_name_cn`
+- ❌ `as_org` → ✅ 使用 `asn` 和 `org`
+- ❌ `as_organization` → ✅ 使用 `asn` 和 `org`
 
 #### 3. Hunter 查询 (`hunter_search`)
 
