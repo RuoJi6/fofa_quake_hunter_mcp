@@ -74,22 +74,32 @@ pip install -e .
 #### 1. FOFA 查询 (`fofa_search`)
 
 **主要参数**:
-- `query`: 查询语法（如：`body="admin"`, `domain="example.com"`）
+- `query`: 查询语法（支持逻辑运算符：`&&` AND, `||` OR, `!=` NOT）
 - `size`: 返回条数（默认 100，最大 10000）
 - `page`: 页码（默认 1）
 - `fields`: 返回字段（默认：`host,ip,port,domain,title`）
 
 **查询示例**:
 ```
+# 单条件查询
 body="miner start"
+
+# 逻辑 AND（&&）
 domain="example.com" && port="443"
 title="login" && country="CN"
+
+# 逻辑 OR（||）
+title="admin" || title="后台"
+port="80" || port="443"
+
+# 逻辑 NOT（!=）
+body="admin" && country!="CN"
 ```
 
 #### 2. Quake 查询 (`quake_search`)
 
 **主要参数**:
-- `query`: 查询语法（如：`title:"后台"`, `ip:1.1.1.1`）
+- `query`: 查询语法（支持逻辑运算符：`AND`, `OR`, `NOT`）
 - `size`: 返回条数（默认 100）
 - `include`: 包含字段（逗号分隔，见下方可用字段列表）
 - `exclude`: 排除字段（逗号分隔）
@@ -117,9 +127,19 @@ service.http.favicon.data, service.http.status_code
 
 **查询示例**:
 ```
+# 单条件查询
 title:"后台管理"
+
+# 逻辑 AND
 ip:1.1.1.1 AND port:80
 service:http AND country:"china"
+
+# 逻辑 OR
+domain:example.com OR domain:test.com
+port:80 OR port:443
+
+# 逻辑 NOT
+service:http NOT port:443
 ```
 
 **字段筛选示例**:
@@ -145,7 +165,7 @@ include: "ip,port,service.http.title,service.http.server,domain,components.produ
 #### 3. Hunter 查询 (`hunter_search`)
 
 **主要参数**:
-- `query`: 查询语法（如：`web.body="admin"`, `ip="1.1.1.1"`）
+- `query`: 查询语法（支持逻辑运算符：`&&` AND, `||` OR）
 - `page_size`: 每页条数（可选：10/50/100，默认 10）
 - `page`: 页码（默认 1）
 - `is_web`: 资产类型（1=web资产，2=非web资产，3=全部）
@@ -154,9 +174,16 @@ include: "ip,port,service.http.title,service.http.server,domain,components.produ
 
 **查询示例**:
 ```
+# 单条件查询
 web.body="keyword"
-web.title="后台管理系统"
+
+# 逻辑 AND（&&）
+web.title="后台管理系统" && ip="1.1.1.1"
 domain="example.com" && web.status_code="200"
+
+# 逻辑 OR（||）
+domain="example.com" || domain="test.com"
+web.title="admin" || web.title="login"
 ```
 
 ### AI 对话示例

@@ -26,13 +26,13 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="fofa_search",
-            description="Search FOFA cyberspace mapping platform. Requires FOFA_EMAIL and FOFA_KEY environment variables. Query syntax examples: body=\"miner start\", domain=\"example.com\", ip=\"1.1.1.1\", title=\"login\", port=\"80\"",
+            description="Search FOFA cyberspace mapping platform. Requires FOFA_EMAIL and FOFA_KEY environment variables. Query syntax supports logical operators: && (AND), || (OR), != (NOT). Examples: body=\"miner start\", domain=\"example.com\" && port=\"443\", title=\"login\" && country=\"CN\"",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "FOFA search query. Supports both quoted and unquoted syntax. Examples: body=\"miner start\", domain=example.com, ip=1.1.1.1",
+                        "description": "FOFA search query. Supports logical operators: && (AND), || (OR), != (NOT). Examples: body=\"miner start\", domain=\"example.com\" && port=\"443\", title=\"login\" || title=\"admin\"",
                     },
                     "size": {
                         "type": "integer",
@@ -55,13 +55,13 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="quake_search",
-            description="Search Quake 360 cyberspace mapping platform using scroll API (supports deep pagination). Requires QUAKE_KEY environment variable. Query syntax: title:\"keyword\" for title search, ip:1.1.1.1 for IP, domain:example.com for domain, port:80 for port, service:http for service. IMPORTANT: Use 'include' parameter to specify which fields to return. NOTE: Field names must be exact - use 'asn' and 'org' (NOT 'as_org'), use specific component fields like 'components.product_name_cn' (NOT just 'components'). Supports pagination_id for getting more pages.",
+            description="Search Quake 360 cyberspace mapping platform using scroll API (supports deep pagination). Requires QUAKE_KEY environment variable. Query syntax supports logical operators: AND, OR, NOT. Examples: title:\"keyword\", ip:1.1.1.1 AND port:80, service:http AND country:\"china\". IMPORTANT: Use 'include' parameter to specify which fields to return. NOTE: Field names must be exact - use 'asn' and 'org' (NOT 'as_org'), use specific component fields like 'components.product_name_cn' (NOT just 'components'). Supports pagination_id for getting more pages.",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Quake search query. Examples: title:\"后台管理\" (search title), ip:1.1.1.1 (search IP), domain:example.com (search domain), service:http (search service)",
+                        "description": "Quake search query. Supports logical operators: AND, OR, NOT. Examples: title:\"后台管理\", ip:1.1.1.1 AND port:80, service:http AND country:\"china\", domain:example.com OR domain:test.com",
                     },
                     "size": {
                         "type": "integer",
@@ -104,13 +104,13 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="hunter_search",
-            description="Search Hunter (奇安信鹰图) cyberspace mapping platform. Requires HUNTER_KEY environment variable. Query syntax examples: web.body=\"keyword\", ip=\"1.1.1.1\", domain=\"example.com\", web.title=\"login\". Supports filtering by asset type: web assets, non-web assets, or all. Supports time range filtering (querying beyond 30 days will consume extra credits).",
+            description="Search Hunter (奇安信鹰图) cyberspace mapping platform. Requires HUNTER_KEY environment variable. Query syntax supports logical operators: && (AND), || (OR). Examples: web.body=\"keyword\", web.title=\"login\" && ip=\"1.1.1.1\", domain=\"example.com\" && web.status_code=\"200\". Supports filtering by asset type: web assets, non-web assets, or all. Supports time range filtering (querying beyond 30 days will consume extra credits).",
             inputSchema={
                 "type": "object",
                 "properties": {
                     "query": {
                         "type": "string",
-                        "description": "Hunter search query. Supports both quoted and unquoted syntax. Examples: web.body=\"keyword\", ip=1.1.1.1, domain=example.com",
+                        "description": "Hunter search query. Supports logical operators: && (AND), || (OR). Examples: web.body=\"keyword\", web.title=\"login\" && ip=\"1.1.1.1\", domain=\"example.com\" || domain=\"test.com\"",
                     },
                     "page": {
                         "type": "integer",
