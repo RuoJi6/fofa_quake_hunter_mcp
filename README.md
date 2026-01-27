@@ -74,15 +74,36 @@ pip install -e .
 #### 1. FOFA 查询 (`fofa_search`)
 
 **主要参数**:
-- `query`: 查询语法（支持逻辑运算符：`&&` AND, `||` OR, `!=` NOT）
+- `query`: 查询语法（支持多种匹配和逻辑运算符）
 - `size`: 返回条数（默认 100，最大 10000）
 - `page`: 页码（默认 1）
 - `fields`: 返回字段（默认：`host,ip,port,domain,title`）
 
+**匹配运算符**:
+- `=` - 匹配（模糊匹配），`=""`时可查询不存在字段或值为空的情况
+- `==` - 完全匹配，`==""`时可查询存在且值为空的情况
+- `!=` - 不匹配，`!=""`时可查询值为空的情况
+- `*=` - 模糊匹配，使用 `*` 或 `?` 通配符（个人版及以上）
+
+**逻辑运算符**:
+- `&&` - 与（AND）
+- `||` - 或（OR）
+- `()` - 括号确认查询优先级
+
 **查询示例**:
 ```
-# 单条件查询
+# 基础匹配
 body="miner start"
+domain="example.com"
+
+# 完全匹配
+server=="Microsoft-IIS/10"
+
+# 不匹配
+body="admin" && country!="CN"
+
+# 模糊匹配（通配符）
+banner*="mys??"
 
 # 逻辑 AND（&&）
 domain="example.com" && port="443"
@@ -92,19 +113,24 @@ title="login" && country="CN"
 title="admin" || title="后台"
 port="80" || port="443"
 
-# 逻辑 NOT（!=）
-body="admin" && country!="CN"
+# 优先级控制
+(title="admin" || title="login") && country="CN"
 ```
 
 #### 2. Quake 查询 (`quake_search`)
 
 **主要参数**:
-- `query`: 查询语法（支持逻辑运算符：`AND`, `OR`, `NOT`）
+- `query`: 查询语法（使用冒号语法：`field:value`）
 - `size`: 返回条数（默认 100）
 - `include`: 包含字段（逗号分隔，见下方可用字段列表）
 - `exclude`: 排除字段（逗号分隔）
 - `pagination_id`: 深度翻页 ID（5分钟有效）
 - `start_time` / `end_time`: 时间范围（UTC格式：2020-10-14 00:00:00）
+
+**查询语法**:
+- 使用冒号 `:` 连接字段和值，如 `port:443`、`title:"keyword"`
+- 逻辑运算符：`AND`、`OR`、`NOT`（大写）
+- 括号 `()` 控制优先级
 
 **可用字段（注册用户 - 服务数据）**:
 ```
@@ -128,18 +154,22 @@ service.http.favicon.data, service.http.status_code
 **查询示例**:
 ```
 # 单条件查询
+port:443
 title:"后台管理"
 
 # 逻辑 AND
-ip:1.1.1.1 AND port:80
-service:http AND country:"china"
+port:3389 AND country:"China"
+port:3389 AND country_cn:"中国" AND NOT province_cn:"广东"
 
 # 逻辑 OR
-domain:example.com OR domain:test.com
-port:80 OR port:443
+port:3389 AND (country:"China" OR country:"United States")
 
 # 逻辑 NOT
-service:http NOT port:443
+port:80 AND NOT response:"baidu"
+service:http AND NOT response:"baidu"
+
+# 优先级控制
+port:3389 AND (country:"China" OR country:"United States") AND NOT province_cn:"广东"
 ```
 
 **字段筛选示例**:
@@ -165,17 +195,42 @@ include: "ip,port,service.http.title,service.http.server,domain,components.produ
 #### 3. Hunter 查询 (`hunter_search`)
 
 **主要参数**:
-- `query`: 查询语法（支持逻辑运算符：`&&` AND, `||` OR）
+- `query`: 查询语法（使用等号语法：`field="value"`）
 - `page_size`: 每页条数（可选：10/50/100，默认 10）
 - `page`: 页码（默认 1）
 - `is_web`: 资产类型（1=web资产，2=非web资产，3=全部）
 - `fields`: 返回字段
 - `start_time` / `end_time`: 时间范围（格式：YYYY-MM-DD）
 
+**匹配运算符**:
+- `=` - 模糊查询，查询包含关键词的资产
+- `==` - 精确查询，查询有且仅有关键词的资产
+- `!=` - 模糊剔除，剔除包含关键词的资产。使用 `!=""` 可查询值不为空的情况
+- `!==` - 精确剔除，剔除有且仅有关键词的资产
+
+**逻辑运算符**:
+- `&&` - 与（AND）
+- `||` - 或（OR）
+- `()` - 括号内表示查询优先级最高
+
 **查询示例**:
 ```
-# 单条件查询
+# 模糊匹配
 web.body="keyword"
+domain="example.com"
+
+# 精确匹配
+web.title=="登录"
+ip=="1.1.1.1"
+
+# 模糊剔除
+web.body="admin" && ip!="1.1.1.1"
+
+# 精确剔除
+domain!=="example.com"
+
+# 查询值不为空
+ip!=""
 
 # 逻辑 AND（&&）
 web.title="后台管理系统" && ip="1.1.1.1"
@@ -184,6 +239,9 @@ domain="example.com" && web.status_code="200"
 # 逻辑 OR（||）
 domain="example.com" || domain="test.com"
 web.title="admin" || web.title="login"
+
+# 优先级控制
+(web.title="admin" || web.title="login") && ip!=""
 ```
 
 ### AI 对话示例
