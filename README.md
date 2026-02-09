@@ -51,7 +51,6 @@ pip install -e .
       "command": "uvx",
       "args": ["fofa-quake-hunter-mcp"],
       "env": {
-        "FOFA_EMAIL": "your_email@example.com",
         "FOFA_KEY": "your_fofa_api_key",
         "QUAKE_KEY": "your_quake_api_key",
         "HUNTER_KEY": "your_hunter_api_key"
@@ -61,7 +60,9 @@ pip install -e .
 }
 ```
 
-**注意**: 你可以只配置需要使用的平台，未配置的工具在调用时会返回友好的配置提示。
+**注意**: 
+- 你可以只配置需要使用的平台，未配置的工具在调用时会返回友好的配置提示
+- FOFA_EMAIL 是可选的，大多数情况下只需要 FOFA_KEY
 
 #### 获取 API Key
 
@@ -336,7 +337,6 @@ Add to your MCP configuration file (e.g., Claude Desktop's `claude_desktop_confi
       "command": "uvx",
       "args": ["fofa-quake-hunter-mcp"],
       "env": {
-        "FOFA_EMAIL": "your_email@example.com",
         "FOFA_KEY": "your_fofa_api_key",
         "QUAKE_KEY": "your_quake_api_key",
         "HUNTER_KEY": "your_hunter_api_key"
@@ -346,7 +346,9 @@ Add to your MCP configuration file (e.g., Claude Desktop's `claude_desktop_confi
 }
 ```
 
-**Note**: You can configure only the platforms you need. Unconfigured tools will show friendly setup instructions when called.
+**Note**: 
+- You can configure only the platforms you need. Unconfigured tools will show friendly setup instructions when called.
+- FOFA_EMAIL is optional and only needed for some API endpoints. Most users only need FOFA_KEY.
 
 #### Get API Keys
 

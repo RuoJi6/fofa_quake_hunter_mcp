@@ -26,7 +26,7 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="fofa_search",
-            description="Search FOFA cyberspace mapping platform. Requires FOFA_EMAIL and FOFA_KEY environment variables. Query syntax: field=\"value\" format. Matching operators: = (match), == (exact match), != (not match), *= (fuzzy match with wildcards). Logical operators: && (AND), || (OR). Examples: body=\"miner start\", server==\"nginx\", domain=\"example.com\" && port=\"443\"",
+            description="Search FOFA cyberspace mapping platform. Requires FOFA_KEY environment variable (FOFA_EMAIL is optional). Query syntax: field=\"value\" format. Matching operators: = (match), == (exact match), != (not match), *= (fuzzy match with wildcards). Logical operators: && (AND), || (OR). Examples: body=\"miner start\", server==\"nginx\", domain=\"example.com\" && port=\"443\"",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -169,25 +169,25 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
 async def fofa_search(args: dict) -> list[TextContent]:
     """Search FOFA platform."""
-    email = os.getenv("FOFA_EMAIL")
     key = os.getenv("FOFA_KEY")
+    email = os.getenv("FOFA_EMAIL", "")  # Email is optional
     
-    if not email or not key:
+    if not key:
         return [TextContent(
             type="text",
-            text="❌ Configuration Error: FOFA_EMAIL and FOFA_KEY environment variables are required.\n\n"
-                 "Please configure them in your MCP settings:\n"
+            text="❌ Configuration Error: FOFA_KEY environment variable is required.\n\n"
+                 "Please configure it in your MCP settings:\n"
                  '{\n'
                  '  "mcpServers": {\n'
                  '    "fofa-quake-hunter": {\n'
                  '      "env": {\n'
-                 '        "FOFA_EMAIL": "your_email@example.com",\n'
                  '        "FOFA_KEY": "your_fofa_api_key"\n'
                  '      }\n'
                  '    }\n'
                  '  }\n'
                  '}\n\n'
-                 "Get your API key from: https://fofa.info -> Personal Center -> API Key"
+                 "Get your API key from: https://fofa.info -> Personal Center -> API Key\n"
+                 "Note: FOFA_EMAIL is optional and only needed for some API endpoints."
         )]
     
     query = args["query"]
@@ -200,13 +200,16 @@ async def fofa_search(args: dict) -> list[TextContent]:
     
     url = f"https://fofa.info/api/v1/search/all"
     params = {
-        "email": email,
         "key": key,
         "qbase64": qbase64,
         "size": size,
         "page": page,
         "fields": fields,
     }
+    
+    # Add email if provided
+    if email:
+        params["email"] = email
     
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
