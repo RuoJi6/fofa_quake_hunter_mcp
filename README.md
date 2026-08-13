@@ -1,6 +1,6 @@
-# FOFA Quake Hunter MCP Server
+# FOFA Quake Hunter DayDayMap MCP Server
 
-一个用于查询 FOFA、Quake 和 Hunter 网络空间测绘平台的 MCP (Model Context Protocol) 服务器。
+一个用于查询 FOFA、Quake、Hunter 和 DayDayMap 网络空间测绘平台的 MCP (Model Context Protocol) 服务器。
 
 [English](#english) | [中文](#中文)
 
@@ -13,6 +13,8 @@
 - 🔍 **FOFA 查询**: 支持 FOFA 网络空间测绘系统的资产查询
 - 🌐 **Quake 查询**: 支持 360 Quake 网络空间测绘系统的深度查询
 - 🦅 **Hunter 查询**: 支持奇安信鹰图平台的资产查询
+- 🗺️ **DayDayMap 查询**: 支持 DayDayMap 资产查询、字段筛选和分页
+- 🧩 **MCP SDK v2**: 使用当前 `MCPServer` API，可直接通过 `uvx` 运行
 - 🤖 **AI 友好**: 所有参数支持自然语言对话设置
 - ⚙️ **灵活配置**: 可按需配置单个或多个平台
 
@@ -53,7 +55,8 @@ pip install -e .
       "env": {
         "FOFA_KEY": "your_fofa_api_key",
         "QUAKE_KEY": "your_quake_api_key",
-        "HUNTER_KEY": "your_hunter_api_key"
+        "HUNTER_KEY": "your_hunter_api_key",
+        "DAYDAYMAP_KEY": "your_daydaymap_api_key"
       }
     }
   }
@@ -63,12 +66,14 @@ pip install -e .
 **注意**: 
 - 你可以只配置需要使用的平台，未配置的工具在调用时会返回友好的配置提示
 - FOFA_EMAIL 是可选的，大多数情况下只需要 FOFA_KEY
+- DayDayMap 同时兼容环境变量 `DAYDAYMAP_API_KEY`
 
 #### 获取 API Key
 
 - **FOFA**: 登录 [https://fofa.info](https://fofa.info) → 个人中心 → API Key
 - **Quake**: 登录 [https://quake.360.net](https://quake.360.net) → 个人中心 → 密钥管理
 - **Hunter**: 登录 [https://hunter.qianxin.com](https://hunter.qianxin.com) → 个人中心 → API管理
+- **DayDayMap**: 登录 [https://www.daydaymap.com](https://www.daydaymap.com) → 个人中心
 
 ### 功能说明
 
@@ -245,6 +250,22 @@ web.title="admin" || web.title="login"
 (web.title="admin" || web.title="login") && ip!=""
 ```
 
+#### 4. DayDayMap 查询 (`daydaymap_search`)
+
+**主要参数**:
+- `query`: 未经 Base64 编码的 DayDayMap 查询语法，服务器会自动编码
+- `page`: 页码（默认 1）
+- `page_size`: 每页条数（默认 100，最大 10000）
+- `fields`: 逗号分隔的返回字段
+- `exclude_fields`: 排除字段，只在 `fields` 为空时生效
+
+**查询示例**:
+```
+ip="1.1.1.1"
+domain="example.com"
+port="443" && web.title="login"
+```
+
 ### AI 对话示例
 
 ```
@@ -256,17 +277,20 @@ AI: 将设置 query='title:"后台管理"', include='ip,port'
 
 用户: 查询 Hunter，web.title="登录"，只要 web 资产，每页 100 条
 AI: 将设置 query='web.title="登录"', is_web=1, page_size=100
+
+用户: 查询 DayDayMap，domain="example.com"，返回 50 条
+AI: 将设置 query='domain="example.com"', page_size=50
 ```
 
 ### 功能对比
 
-| 功能 | FOFA | Quake | Hunter |
-|------|------|-------|--------|
-| 返回条数控制 | ✅ size (1-10000) | ✅ size (1-500) | ✅ page_size (10/50/100) |
-| 字段控制 | ✅ fields | ✅ include/exclude | ✅ fields |
-| 翻页 | ✅ page | ✅ pagination_id | ✅ page |
-| 时间范围 | ❌ | ✅ start_time/end_time | ✅ start_time/end_time |
-| 资产类型筛选 | ❌ | ❌ | ✅ is_web |
+| 功能 | FOFA | Quake | Hunter | DayDayMap |
+|------|------|-------|--------|-----------|
+| 返回条数控制 | ✅ size (1-10000) | ✅ size | ✅ page_size (10/50/100) | ✅ page_size (1-10000) |
+| 字段控制 | ✅ fields | ✅ include/exclude | ✅ fields | ✅ fields/exclude_fields |
+| 翻页 | ✅ page | ✅ pagination_id | ✅ page | ✅ page |
+| 时间范围 | ❌ | ✅ start_time/end_time | ✅ start_time/end_time | ✅ 查询语法 |
+| 资产类型筛选 | ❌ | ❌ | ✅ is_web | ✅ 查询语法 |
 
 ### 开发
 
@@ -299,6 +323,8 @@ MIT License - 详见 [LICENSE](LICENSE) 文件
 - 🔍 **FOFA Search**: Query FOFA cyberspace mapping platform
 - 🌐 **Quake Search**: Query 360 Quake cyberspace mapping platform with deep pagination
 - 🦅 **Hunter Search**: Query Qianxin Hunter (鹰图) platform
+- 🗺️ **DayDayMap Search**: Query DayDayMap with pagination and response-field filtering
+- 🧩 **MCP SDK v2**: Uses the current `MCPServer` API and runs directly through `uvx`
 - 🤖 **AI-Friendly**: All parameters support natural language configuration
 - ⚙️ **Flexible Config**: Configure only the platforms you need
 
@@ -339,7 +365,8 @@ Add to your MCP configuration file (e.g., Claude Desktop's `claude_desktop_confi
       "env": {
         "FOFA_KEY": "your_fofa_api_key",
         "QUAKE_KEY": "your_quake_api_key",
-        "HUNTER_KEY": "your_hunter_api_key"
+        "HUNTER_KEY": "your_hunter_api_key",
+        "DAYDAYMAP_KEY": "your_daydaymap_api_key"
       }
     }
   }
@@ -349,12 +376,14 @@ Add to your MCP configuration file (e.g., Claude Desktop's `claude_desktop_confi
 **Note**: 
 - You can configure only the platforms you need. Unconfigured tools will show friendly setup instructions when called.
 - FOFA_EMAIL is optional and only needed for some API endpoints. Most users only need FOFA_KEY.
+- `DAYDAYMAP_API_KEY` is also accepted as a compatible DayDayMap environment variable.
 
 #### Get API Keys
 
 - **FOFA**: Login to [https://fofa.info](https://fofa.info) → Personal Center → API Key
 - **Quake**: Login to [https://quake.360.net](https://quake.360.net) → Personal Center → Key Management
 - **Hunter**: Login to [https://hunter.qianxin.com](https://hunter.qianxin.com) → Personal Center → API Management
+- **DayDayMap**: Login to [https://www.daydaymap.com](https://www.daydaymap.com) → Personal Center
 
 ### Tools
 
@@ -407,15 +436,31 @@ web.title="admin panel"
 domain="example.com" && web.status_code="200"
 ```
 
+#### 4. DayDayMap Search (`daydaymap_search`)
+
+**Key Parameters**:
+- `query`: Raw DayDayMap query; the server Base64-encodes it automatically
+- `page`: Page number (default: 1)
+- `page_size`: Results per page (default: 100, maximum: 10000)
+- `fields`: Comma-separated response fields
+- `exclude_fields`: Fields to exclude when `fields` is empty
+
+**Query Examples**:
+```
+ip="1.1.1.1"
+domain="example.com"
+port="443" && web.title="login"
+```
+
 ### Feature Comparison
 
-| Feature | FOFA | Quake | Hunter |
-|---------|------|-------|--------|
-| Result Count | ✅ size (1-10000) | ✅ size (1-500) | ✅ page_size (10/50/100) |
-| Field Control | ✅ fields | ✅ include/exclude | ✅ fields |
-| Pagination | ✅ page | ✅ pagination_id | ✅ page |
-| Time Range | ❌ | ✅ start_time/end_time | ✅ start_time/end_time |
-| Asset Type Filter | ❌ | ❌ | ✅ is_web |
+| Feature | FOFA | Quake | Hunter | DayDayMap |
+|---------|------|-------|--------|-----------|
+| Result Count | ✅ size (1-10000) | ✅ size | ✅ page_size (10/50/100) | ✅ page_size (1-10000) |
+| Field Control | ✅ fields | ✅ include/exclude | ✅ fields | ✅ fields/exclude_fields |
+| Pagination | ✅ page | ✅ pagination_id | ✅ page | ✅ page |
+| Time Range | ❌ | ✅ start_time/end_time | ✅ start_time/end_time | ✅ query syntax |
+| Asset Type Filter | ❌ | ❌ | ✅ is_web | ✅ query syntax |
 
 ### Development
 

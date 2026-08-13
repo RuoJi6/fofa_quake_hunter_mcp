@@ -1,14 +1,14 @@
 [project]
 name = "fofa-quake-hunter-mcp"
-version = "0.1.5"
-description = "MCP server for FOFA, Quake, and Hunter cyberspace mapping platforms"
+version = "0.2.0"
+description = "MCP server for FOFA, Quake, Hunter, and DayDayMap cyberspace mapping platforms"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
     { name = "RuoJi6", email = "ruoji6@example.com" }
 ]
-keywords = ["mcp", "fofa", "quake", "hunter", "cyberspace", "security", "osint"]
+keywords = ["mcp", "fofa", "quake", "hunter", "daydaymap", "cyberspace", "security", "osint"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -22,8 +22,14 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "mcp>=1.0.0",
+    "mcp>=2.0.0,<3",
     "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
 ]
 
 [project.urls]
